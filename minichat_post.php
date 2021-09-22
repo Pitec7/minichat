@@ -1,4 +1,7 @@
 <?php
+// Démarrage de la session
+session_start();
+
 try
 {
     // On se connecte à la base de donnée MySQL, ici tp_openclassrooms
