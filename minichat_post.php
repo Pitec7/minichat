@@ -13,9 +13,67 @@ catch (Exception $e)
     die('Erreur : ' . $e->getMessage());
 }
 
-// On récupère tout le contenu de la table minichat
-$reponse = $bdd->query('SELECT * FROM minichat');
-$message = $reponse->fetch();
+//On récupère tout le contenu de la table minichat dans l'ordre décroissant selon ID
+$reponse = $bdd->query('SELECT * FROM minichat ORDER BY ID DESC');
+
+// On enregistre les 10 derniers messages dans l'array "$_SESSION['message']" qui contient des array "[$nombre_message]"
+
+$nombre_message = 1;
+
+while ($message = $reponse->fetch())
+{    
+    if ($nombre_message <= 10)
+    {
+        $_SESSION['message'][$nombre_message] = $message;
+    }
+    
+    $nombre_message ++;
+}
+
+/*
+// On enregistre les 10 derniers messages dans l'array "$_SESSION['message']" qui contient des array "[$nombre_message]"
+
+1ère méthode, ne marche pas:
+
+$_SESSION['nombre_message'] = 1;
+
+while ($message = $reponse->fetch())
+{    
+    while ($_SESSION['nombre_message'] <= 10)
+    {
+        $_SESSION[$_SESSION['nombre_message']] = $message;
+        $_SESSION['nombre_message'] ++;
+    }
+}
+
+2e méthode:
+
+$reponse = $bdd->query('SELECT * FROM minichat ORDER BY ID DESC LIMIT 0,10');
+
+$nombre_message = 1;
+
+while ($message = $reponse->fetch())
+{
+    
+    $_SESSION['message'][$nombre_message] = $message;
+    $nombre_message ++;
+}
+*/
+
+// On termine le traitement de la requête
+$reponse->closeCursor();
+
+/*
+while ($message = $reponse->fetch())
+{
+    while ($message['ID'] == $id)
+    {
+        $_SESSION['ID'] = $message['ID'];
+        $_SESSION['pseudo'] = $message['pseudo'];
+        $_SESSION['message'] = $message['message'];
+    }
+}
+*/
 
 // Redirection vers minichat.php
 header('Location: minichat.php');
