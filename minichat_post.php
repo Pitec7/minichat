@@ -13,6 +13,21 @@ catch (Exception $e)
     die('Erreur : ' . $e->getMessage());
 }
 
+// On récupère le message insérer par l'utilisateur
+
+if (isset($_POST['pseudo']) AND isset($_POST['message']))
+{
+    $pseudonyme = htmlspecialchars($_POST['pseudo']);
+    $message_laisse = htmlspecialchars($_POST['message']);
+
+    // On insère le message dans la base de donnée
+    $req = $bdd->prepare('INSERT INTO minichat(pseudo, message) VALUES(:pseudo, :message)');
+    $req->execute(array(
+        'pseudo' => $pseudonyme,
+        'message' => $message_laisse,
+    ));
+}
+
 //On récupère tout le contenu de la table minichat dans l'ordre décroissant selon ID
 $reponse = $bdd->query('SELECT * FROM minichat ORDER BY ID DESC');
 
@@ -31,20 +46,6 @@ while ($message = $reponse->fetch())
 }
 
 /*
-// On enregistre les 10 derniers messages dans l'array "$_SESSION['message']" qui contient des array "[$nombre_message]"
-
-1ère méthode, ne marche pas:
-
-$_SESSION['nombre_message'] = 1;
-
-while ($message = $reponse->fetch())
-{    
-    while ($_SESSION['nombre_message'] <= 10)
-    {
-        $_SESSION[$_SESSION['nombre_message']] = $message;
-        $_SESSION['nombre_message'] ++;
-    }
-}
 
 2e méthode:
 
